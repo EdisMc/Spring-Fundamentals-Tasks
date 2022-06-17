@@ -1,0 +1,36 @@
+package bg.softuni.intro.cats.services.impl;
+
+import bg.softuni.intro.cats.models.dto.CreateOwnerDTO;
+import bg.softuni.intro.cats.models.entities.CatEntity;
+import bg.softuni.intro.cats.models.entities.OwnerEntity;
+import bg.softuni.intro.cats.repository.OwnerRepository;
+import bg.softuni.intro.cats.services.OwnerService;
+import org.springframework.stereotype.Service;
+
+@Service
+public class OwnerServiceImpl implements OwnerService {
+
+    private OwnerRepository ownerRepository;
+
+    public OwnerServiceImpl(OwnerRepository ownerRepository) {
+        this.ownerRepository = ownerRepository;
+    }
+
+    @Override
+    public void createOwner(CreateOwnerDTO createOwnerDTO) {
+
+        OwnerEntity owner = new OwnerEntity().
+                setOwnerName(createOwnerDTO.getOwnerName());
+
+        createOwnerDTO.getCatNames().
+                forEach(name -> {
+                    CatEntity cat = new CatEntity().
+                            setCatName(name).
+                            setOwner(owner);
+                    owner.addCat(cat);
+                });
+
+        ownerRepository.save(owner);
+    }
+
+}
